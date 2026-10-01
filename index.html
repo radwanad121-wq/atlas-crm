@@ -1,1 +1,277 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atlas CRM</title><style>*{box-sizing:border-box}body{margin:0;background:#080d14;color:#f5f7fb;font-family:system-ui,sans-serif}nav{padding:20px 6%;border-bottom:1px solid #233044;display:flex;justify-content:space-between}.wrap{max-width:1150px;margin:auto;padding:55px 6%}.pill{border:1px solid #304056;border-radius:99px;padding:7px 12px;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.card{background:#101925;border:1px solid #26364b;border-radius:18px;padding:20px}.stat{font-size:30px;font-weight:900}.muted{color:#97a4b7}.deal{padding:14px;margin:10px 0;background:#0b121d;border:1px solid #26364b;border-radius:12px}.btn{background:#e44;color:#fff;border:0;border-radius:10px;padding:11px 15px;font-weight:800}</style></head><body><nav><b>ATLAS <span style="color:#e44">CRM</span></b><span class="pill">SALES OPERATIONS</span></nav><main class="wrap"><span class="pill">Q4 PIPELINE</span><h1>Revenue, organized.</h1><div class="grid"><div class="card"><div class="muted">Pipeline</div><div class="stat">$284K</div></div><div class="card"><div class="muted">Open deals</div><div class="stat">32</div></div><div class="card"><div class="muted">Win rate</div><div class="stat">38%</div></div><div class="card"><div class="muted">Activities</div><div class="stat">147</div></div></div><br><div class="grid"><div class="card"><h2>Pipeline</h2><div id="deals"></div></div><div class="card"><h2>Today's activity</h2><p>09:30 — Client call</p><p>11:00 — Product demo</p><p>14:30 — Proposal follow-up</p><p>16:00 — Pipeline review</p><button class="btn" onclick="alert('New opportunity added')">+ New opportunity</button></div></div></main><script>const d=[['Northstar Energy','$42K','Proposal'],['Acme Group','$28K','Negotiation'],['Nova Systems','$65K','Discovery'],['MediCore','$31K','Proposal'],['Atlas Logistics','$18K','Qualified']];document.getElementById('deals').innerHTML=d.map(x=>`<div class="deal"><b>${x[0]}</b><span style="float:right">${x[1]}</span><div class="muted">${x[2]}</div></div>`).join('')</script></body></html>
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas CRM — Sales pipeline, organized</title>
+<meta name="description" content="A modern CRM dashboard: pipeline, contacts, tasks and analytics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1);--r:16px;--acc:#ff5a4e;--acc2:#ff8a65;--ok:#22c55e;--warn:#f59e0b;--blue:#3b82f6;--vio:#8b5cf6}
+[data-theme=dark]{--bg:#0b0d12;--side:#0f1218;--card:#141821;--card2:#1a1f2a;--line:#232836;--txt:#eef1f6;--mut:#8a93a6}
+[data-theme=light]{--bg:#f4f6fa;--side:#ffffff;--card:#ffffff;--card2:#f7f8fb;--line:#e6e9f0;--txt:#131722;--mut:#6b7385}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:14.5px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;transition:background .4s,color .4s}
+button,input,select,textarea{font:inherit;color:inherit}button{background:none;border:0;cursor:pointer}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+aside{background:var(--side);border-right:1px solid var(--line);padding:22px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;transition:background .4s}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;padding:4px 10px 22px}
+.logo i{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-style:normal;color:#fff;font-size:15px;box-shadow:0 8px 20px rgba(255,90,78,.35)}
+.nv{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);font-weight:600;position:relative;transition:color .3s,background .3s}
+.nv:hover{color:var(--txt);background:var(--card2)}
+.nv.on{color:var(--txt);background:var(--card2)}
+.nv.on:before{content:"";position:absolute;left:-16px;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--acc)}
+.nv svg{width:19px;height:19px}
+.nv .b{margin-left:auto;font-size:11px;background:var(--acc);color:#fff;border-radius:999px;padding:1px 8px}
+.side-card{margin-top:auto;border-radius:16px;padding:16px;background:linear-gradient(140deg,rgba(255,90,78,.18),rgba(139,92,246,.12));border:1px solid var(--line)}
+.side-card b{display:block;margin-bottom:4px}
+.side-card p{font-size:12.5px;color:var(--mut)}
+.prog{height:6px;border-radius:6px;background:var(--line);margin-top:10px;overflow:hidden}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0;transition:width 1.6s var(--ease)}
+main{padding:22px clamp(16px,3vw,34px) 40px;min-width:0}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.top h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.top .sub{color:var(--mut);font-size:13.5px}
+.sr{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 12px;min-width:260px}
+.sr input{border:0;outline:0;background:none;padding:10px 0;width:100%}
+.ib{width:42px;height:42px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;position:relative;font-size:17px}
+.ib .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 2px var(--card)}
+.av{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#ec4899);display:grid;place-items:center;color:#fff;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;font-weight:700;transition:transform .2s,box-shadow .3s}
+.btn:active{transform:scale(.97)}
+.btn-a{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 8px 20px rgba(255,90,78,.3)}
+.btn-l{background:var(--card);border:1px solid var(--line)}
+.burger{display:none}
+@media(max-width:980px){.app{grid-template-columns:1fr}aside{position:fixed;z-index:60;left:0;width:260px;transform:translateX(-100%);transition:transform .5s var(--ease)}aside.open{transform:none;box-shadow:20px 0 60px rgba(0,0,0,.4)}.burger{display:grid}.sr{display:none}}
+.view{display:none;animation:vin .6s var(--ease)}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;transition:background .4s,border-color .4s,transform .3s var(--ease)}
+.kpi{position:relative;overflow:hidden}
+.kpi:hover{transform:translateY(-3px)}
+.kpi .l{color:var(--mut);font-size:13px;font-weight:600;display:flex;justify-content:space-between}
+.kpi .v{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:8px 0 6px}
+.kpi .d{font-size:12.5px;font-weight:700}
+.up{color:var(--ok)}.dn{color:var(--acc)}
+.kpi svg.sp{position:absolute;right:16px;bottom:16px;width:96px;height:36px}
+.kpi .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+.g3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px;margin-top:16px}
+.ch-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.ch-h h3{font-size:16px;font-weight:700}
+.seg{display:flex;background:var(--card2);border-radius:10px;padding:3px}
+.seg button{padding:6px 12px;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--mut)}
+.seg button.on{background:var(--card);color:var(--txt);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.cw{position:relative;height:280px}
+.feed{display:grid;gap:14px;max-height:330px;overflow:auto}
+.fe{display:flex;gap:12px;align-items:flex-start;animation:vin .5s var(--ease) both}
+.fe .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:15px}
+.fe b{font-weight:700}
+.fe small{display:block;color:var(--mut);font-size:12px}
+.goal{display:flex;align-items:center;gap:20px}
+.ring{position:relative;width:140px;height:140px}
+.ring svg{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:26px;font-weight:800}
+.top5{display:grid;gap:12px}
+.t5{display:flex;align-items:center;gap:12px}
+.mini{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;flex:none}
+.bar{flex:1}
+.bar .tt{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.bar .tr{height:6px;background:var(--card2);border-radius:6px;margin-top:6px;overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:6px;width:0;transition:width 1.4s var(--ease)}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+@media(max-width:560px){.kpis{grid-template-columns:1fr}}
+/* kanban */
+.kb{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr));gap:14px;overflow-x:auto;padding-bottom:10px}
+.col{background:var(--card2);border:1px solid var(--line);border-radius:var(--r);padding:12px;min-height:420px;transition:background .3s,border-color .3s}
+.col.over{border-color:var(--acc);background:rgba(255,90,78,.06)}
+.col h4{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;padding:4px 4px 12px}
+.col h4 i{width:8px;height:8px;border-radius:50%}
+.col h4 span{margin-left:auto;color:var(--mut);font-weight:600;font-size:12.5px}
+.deal{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:grab;transition:transform .25s var(--ease),box-shadow .25s,opacity .2s;animation:vin .4s var(--ease) both}
+.deal:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.deal.drag{opacity:.4}
+.deal .co{font-weight:700}
+.deal .am{font-weight:800;font-size:16px;margin-top:4px}
+.deal .ft{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--mut)}
+.chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
+/* table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:12px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap}
+.tbl td{padding:13px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl tr{transition:background .2s}.tbl tbody tr:hover{background:var(--card2)}
+.who{display:flex;gap:10px;align-items:center}
+.who small{display:block;color:var(--mut);font-size:12px}
+.tw{overflow-x:auto}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+/* tasks */
+.tasks{display:grid;gap:10px;max-width:820px}
+.task{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;transition:opacity .3s,transform .3s var(--ease)}
+.task.done{opacity:.5}.task.done .tx{text-decoration:line-through}
+.cb{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;transition:.2s}
+.task.done .cb{background:var(--ok);border-color:var(--ok);color:#fff}
+.task .tx{flex:1;font-weight:600}
+.task small{color:var(--mut)}
+.addt{display:flex;gap:10px;margin-bottom:16px;max-width:820px}
+.addt input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;outline:0}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(3px);z-index:80;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
+.ov.on{opacity:1;pointer-events:auto}
+.md{width:min(480px,100%);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;transform:scale(.96);transition:transform .4s var(--ease)}
+.ov.on .md{transform:none}
+.md h3{font-size:20px;margin-bottom:16px}
+.fg{display:grid;gap:12px}
+.fg label{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;display:grid;gap:6px}
+.fg input,.fg select{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:0;text-transform:none;letter-spacing:0;font-weight:500;color:var(--txt)}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--txt);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;transform:translateY(160%);transition:transform .5s var(--ease);z-index:99}
+.toast.on{transform:none}
+.credit{margin-top:30px;font-size:12px;color:var(--mut);text-align:center}
+.credit a{color:var(--acc2)}
+</style>
+</head>
+<body>
+<div class="app">
+<aside id="side">
+  <div class="logo"><i>A</i>Atlas CRM</div>
+  <button class="nv on" data-v="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Dashboard</button>
+  <button class="nv" data-v="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h10M4 19h6"/></svg>Pipeline<span class="b" id="dealN">0</span></button>
+  <button class="nv" data-v="cont"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5"/></svg>Contacts</button>
+  <button class="nv" data-v="task"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Tasks<span class="b" id="taskN">0</span></button>
+  <div class="side-card"><b>Q4 target</b><p><span id="tgtTxt">€0</span> of €400K closed</p><div class="prog"><i id="tgt"></i></div></div>
+</aside>
+<main>
+  <div class="top">
+    <button class="ib burger" id="burger">☰</button>
+    <div><h1 id="vt">Good morning, Redouane 👋</h1><div class="sub" id="vs">Here's what's happening with your pipeline today.</div></div>
+    <label class="sr">⌕<input id="gs" placeholder="Search deals, contacts…"></label>
+    <button class="ib" id="theme" title="Toggle theme">☾</button>
+    <button class="ib" title="Notifications">🔔<span class="dot"></span></button>
+    <div class="av">RD</div>
+  </div>
+
+  <section class="view on" id="v-dash">
+    <div class="kpis" id="kpis"></div>
+    <div class="g2">
+      <div class="card"><div class="ch-h"><h3>Revenue</h3><div class="seg" id="rng"><button data-r="w">Week</button><button class="on" data-r="m">Month</button><button data-r="y">Year</button></div></div><div class="cw"><canvas id="rev"></canvas></div></div>
+      <div class="card"><div class="ch-h"><h3>Deal sources</h3></div><div class="cw" style="height:220px"><canvas id="src"></canvas></div><div id="srcL" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;font-size:13px"></div></div>
+    </div>
+    <div class="g3">
+      <div class="card"><div class="ch-h"><h3>Live activity</h3><span class="chip" style="background:rgba(34,197,94,.15);color:var(--ok)">● Live</span></div><div class="feed" id="feed"></div></div>
+      <div class="card"><div class="ch-h"><h3>Monthly goal</h3></div><div class="goal"><div class="ring"><svg viewBox="0 0 140 140" width="140" height="140"><circle cx="70" cy="70" r="58" stroke="var(--card2)"/><circle id="ringC" cx="70" cy="70" r="58" stroke="url(#gr)" stroke-dasharray="364.4" stroke-dashoffset="364.4" stroke-linecap="round" style="transition:stroke-dashoffset 1.6s var(--ease)"/><defs><linearGradient id="gr"><stop offset="0" stop-color="#ff5a4e"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs></svg><b id="ringT">0%</b></div><div><div style="font-size:24px;font-weight:800">€78,400</div><div style="color:var(--mut);font-size:13px">of €100,000 goal</div><div class="up" style="font-weight:700;font-size:13px;margin-top:8px">▲ 12 days left · on track</div></div></div></div>
+      <div class="card"><div class="ch-h"><h3>Top performers</h3></div><div class="top5" id="top5"></div></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-pipe">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap"><div style="color:var(--mut)">Drag cards between stages. Pipeline value: <b style="color:var(--txt)" id="pv"></b></div><button class="btn btn-a" id="newDeal">＋ New deal</button></div>
+    <div class="kb" id="kb"></div>
+  </section>
+
+  <section class="view" id="v-cont">
+    <div class="card tw"><table class="tbl"><thead><tr><th data-s="n">Name ↕</th><th data-s="c">Company ↕</th><th data-s="st">Status ↕</th><th data-s="v">Value ↕</th><th data-s="l">Last contact ↕</th></tr></thead><tbody id="tb"></tbody></table></div>
+  </section>
+
+  <section class="view" id="v-task">
+    <form class="addt" id="taskF"><input id="taskI" placeholder="Add a task and press Enter…"><button class="btn btn-a">Add</button></form>
+    <div class="tasks" id="tasks"></div>
+  </section>
+  <div class="credit">Atlas CRM · Demo concept with sample data · Designed & built by <a href="https://radwanad121-wq.github.io/project-hub/">Redouane</a></div>
+</main>
+</div>
+
+<div class="ov" id="ov"><form class="md" id="dealF"><h3>New deal</h3><div class="fg">
+  <label>Company<input required id="dC" placeholder="e.g. Le Petit Bistro"></label>
+  <label>Value (€)<input required type="number" min="100" id="dV" placeholder="12000"></label>
+  <label>Stage<select id="dS"></select></label>
+  <label>Owner<select id="dO"><option>RD</option><option>SB</option><option>KM</option><option>LA</option></select></label>
+</div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button type="button" class="btn btn-l" id="dX">Cancel</button><button class="btn btn-a">Create deal</button></div></form></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const ls={g(k,d){try{return JSON.parse(localStorage.getItem('crm_'+k))??d}catch(e){return d}},s(k,v){try{localStorage.setItem('crm_'+k,JSON.stringify(v))}catch(e){}}};
+const eur=n=>'€'+Math.round(n).toLocaleString('en');
+const STAGES=[['lead','New lead','#3b82f6'],['qual','Qualified','#8b5cf6'],['prop','Proposal','#f59e0b'],['neg','Negotiation','#ff8a65'],['won','Won','#22c55e']];
+const OWN={RD:'#6366f1',SB:'#ec4899',KM:'#14b8a6',LA:'#f59e0b'};
+let deals=ls.g('deals',[
+ {id:1,c:'Maison Saffron',v:18500,s:'prop',o:'RD',d:'Website + online store'},{id:2,c:'Atlas Estate',v:42000,s:'neg',o:'SB',d:'CRM rollout'},
+ {id:3,c:'Café Lumière',v:6400,s:'lead',o:'KM',d:'Loyalty app'},{id:4,c:'Riad Yasmine',v:9800,s:'qual',o:'RD',d:'Booking engine'},
+ {id:5,c:'Nordic Parts AB',v:56000,s:'won',o:'LA',d:'Annual contract'},{id:6,c:'Boulangerie Paul M.',v:3200,s:'lead',o:'SB',d:'Click & collect'},
+ {id:7,c:'Casa Motors',v:27500,s:'qual',o:'KM',d:'Lead-gen website'},{id:8,c:'Studio Kora',v:12000,s:'prop',o:'LA',d:'Brand + e-shop'},
+ {id:9,c:'Hôtel Mogador',v:34000,s:'won',o:'RD',d:'Multi-site booking'},{id:10,c:'Green Kitchen',v:7600,s:'neg',o:'SB',d:'Meal-kit store'},
+]);
+let tasks=ls.g('tasks',[{t:'Send proposal to Maison Saffron',d:'Today',x:false},{t:'Follow up with Casa Motors',d:'Today',x:false},{t:'Prepare Q4 pipeline review',d:'Tomorrow',x:false},{t:'Demo call — Riad Yasmine',d:'Fri',x:true},{t:'Update pricing deck',d:'Next week',x:false}]);
+const save=()=>{ls.s('deals',deals);ls.s('tasks',tasks)};
+/* nav */
+const TITLES={dash:['Good morning, Redouane 👋',"Here's what's happening with your pipeline today."],pipe:['Pipeline','Track every deal from first contact to close.'],cont:['Contacts','All your customers and leads in one place.'],task:['Tasks','Stay on top of your follow-ups.']};
+function show(v){$$('.nv').forEach(n=>n.classList.toggle('on',n.dataset.v===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$('#vt').textContent=TITLES[v][0];$('#vs').textContent=TITLES[v][1];$('#side').classList.remove('open');if(v==='pipe')renderKB();if(v==='cont')renderTB();if(v==='task')renderTasks()}
+$$('.nv').forEach(n=>n.onclick=()=>show(n.dataset.v));$('#burger').onclick=()=>$('#side').classList.toggle('open');
+/* theme */
+const th=ls.g('theme','dark');document.documentElement.dataset.theme=th;$('#theme').textContent=th==='dark'?'☀':'☾';
+$('#theme').onclick=()=>{const n=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=n;ls.s('theme',n);$('#theme').textContent=n==='dark'?'☀':'☾';charts()};
+/* KPIs */
+function spark(vals,c){const mx=Math.max(...vals),mn=Math.min(...vals);const p=vals.map((v,i)=>`${i*(96/(vals.length-1))},${34-(v-mn)/(mx-mn||1)*30}`).join(' ');return `<svg class="sp" viewBox="0 0 96 36"><polyline points="${p}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="300" stroke-dashoffset="300"><animate attributeName="stroke-dashoffset" to="0" dur="1.6s" fill="freeze"/></polyline></svg>`}
+function kpis(){const won=deals.filter(d=>d.s==='won').reduce((a,b)=>a+b.v,0),open=deals.filter(d=>d.s!=='won');const pv=open.reduce((a,b)=>a+b.v,0);
+ const K=[['Revenue (won)',won+190000,'▲ 18.2%','up','💶','rgba(34,197,94,.15)','#22c55e',[3,5,4,6,5,8,7,9]],['Pipeline value',pv,'▲ 9.4%','up','📈','rgba(59,130,246,.15)','#3b82f6',[4,4,6,5,7,6,8,9]],['Open deals',open.length,'▲ 3 this week','up','🤝','rgba(139,92,246,.15)','#8b5cf6',[2,3,3,4,3,5,5,6]],['Win rate',38,'▼ 1.2%','dn','🎯','rgba(255,90,78,.15)','#ff5a4e',[6,5,6,4,5,4,4,3]]];
+ $('#kpis').innerHTML=K.map(([l,v,d,cl,ic,bg,c,sp],i)=>`<div class="card kpi"><div class="l">${l}<span class="ic" style="background:${bg}">${ic}</span></div><div class="v" data-n="${v}" data-p="${i===0||i===1?'€':''}" data-s="${i===3?'%':''}">0</div><div class="d ${cl}">${d} <span style="color:var(--mut);font-weight:500">vs last month</span></div>${spark(sp,c)}</div>`).join('');
+ $$('.kpi .v').forEach(el=>{const n=+el.dataset.n,p=el.dataset.p,s=el.dataset.s,t0=performance.now();const st=t=>{const k=Math.min(1,(t-t0)/1400);el.textContent=p+Math.round(n*(1-Math.pow(1-k,3))).toLocaleString('en')+s;if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)});
+ $('#dealN').textContent=open.length;$('#taskN').textContent=tasks.filter(t=>!t.x).length;
+ const tg=won+190000;$('#tgtTxt').textContent=eur(tg);setTimeout(()=>$('#tgt').style.width=Math.min(100,tg/400000*100)+'%',200);
+}
+/* charts */
+let rc,sc,rng='m';
+const DATA={w:[['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[4.2,5.8,5.1,7.4,8.9,3.2,2.1],[3.8,4.6,5.5,6.1,7.2,3.5,2.6]],m:[['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct'],[22,28,26,34,38,36,44,41,52,58],[20,24,27,29,33,35,37,40,43,47]],y:[['2021','2022','2023','2024','2025','2026'],[180,240,310,390,470,560],[160,220,300,360,430,500]]};
+function charts(){if(!window.Chart)return;const dark=document.documentElement.dataset.theme==='dark';const gc=dark?'rgba(255,255,255,.06)':'rgba(0,0,0,.06)',tc=dark?'#8a93a6':'#6b7385';
+ Chart.defaults.font.family="'Plus Jakarta Sans'";Chart.defaults.color=tc;
+ const [lab,a,b]=DATA[rng];const ctx=$('#rev').getContext('2d');const g=ctx.createLinearGradient(0,0,0,280);g.addColorStop(0,'rgba(255,90,78,.35)');g.addColorStop(1,'rgba(255,90,78,0)');
+ rc&&rc.destroy();rc=new Chart(ctx,{type:'line',data:{labels:lab,datasets:[{label:'This period',data:a,borderColor:'#ff5a4e',backgroundColor:g,fill:true,tension:.42,borderWidth:2.5,pointRadius:0,pointHoverRadius:6,pointBackgroundColor:'#ff5a4e'},{label:'Previous',data:b,borderColor:dark?'#4b5367':'#c4cad6',borderDash:[5,5],tension:.42,borderWidth:2,pointRadius:0,fill:false}]},options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:dark?'#1a1f2a':'#fff',titleColor:dark?'#fff':'#111',bodyColor:tc,borderColor:gc,borderWidth:1,padding:12,callbacks:{label:c=>` ${c.dataset.label}: €${c.parsed.y}k`}}},scales:{x:{grid:{display:false},border:{display:false}},y:{grid:{color:gc},border:{display:false},ticks:{callback:v=>'€'+v+'k'}}},animation:{duration:1200,easing:'easeOutQuart'}}});
+ const S=[['Website',38,'#ff5a4e'],['Referral',24,'#8b5cf6'],['LinkedIn',20,'#3b82f6'],['Events',18,'#22c55e']];
+ sc&&sc.destroy();sc=new Chart($('#src'),{type:'doughnut',data:{labels:S.map(s=>s[0]),datasets:[{data:S.map(s=>s[1]),backgroundColor:S.map(s=>s[2]),borderWidth:0,hoverOffset:8}]},options:{maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false}},animation:{animateRotate:true,duration:1400}}});
+ $('#srcL').innerHTML=S.map(s=>`<div style="display:flex;align-items:center;gap:8px"><i style="width:10px;height:10px;border-radius:3px;background:${s[2]}"></i>${s[0]}<b style="margin-left:auto">${s[1]}%</b></div>`).join('');
+}
+$$('#rng button').forEach(b=>b.onclick=()=>{rng=b.dataset.r;$$('#rng button').forEach(x=>x.classList.toggle('on',x===b));charts()});
+/* feed */
+const EV=[['💶','rgba(34,197,94,.15)','<b>Hôtel Mogador</b> signed — €34,000'],['📞','rgba(59,130,246,.15)','<b>SB</b> called <b>Café Lumière</b>'],['✉️','rgba(139,92,246,.15)','Proposal opened by <b>Maison Saffron</b>'],['📅','rgba(245,158,11,.15)','Demo booked with <b>Riad Yasmine</b>'],['⭐','rgba(255,90,78,.15)','New lead from website: <b>Studio Kora</b>'],['🔁','rgba(59,130,246,.15)','<b>Casa Motors</b> moved to Qualified']];
+let fi=0;function pushFeed(first){const e=EV[fi%EV.length];fi++;const ago=first?(fi*7)+' min ago':'just now';$('#feed').insertAdjacentHTML('afterbegin',`<div class="fe"><span class="ic" style="background:${e[1]}">${e[0]}</span><div>${e[2]}<small>${ago}</small></div></div>`);const f=$('#feed');while(f.children.length>8)f.lastChild.remove()}
+for(let i=0;i<5;i++)pushFeed(true);setInterval(()=>pushFeed(false),5000);
+/* goal + top */
+setTimeout(()=>{$('#ringC').style.strokeDashoffset=364.4*(1-.784);let k=0;const t=setInterval(()=>{k+=2;$('#ringT').textContent=Math.min(78,k)+'%';if(k>=78)clearInterval(t)},30)},300);
+const TP=[['RD','Redouane D.',92],['SB','Salma B.',81],['LA','Lina A.',67],['KM','Karim M.',54]];
+$('#top5').innerHTML=TP.map(([i,n,p])=>`<div class="t5"><span class="mini" style="background:${OWN[i]}">${i}</span><div class="bar"><div class="tt"><span>${n}</span><span>${p}%</span></div><div class="tr"><i style="background:${OWN[i]}" data-w="${p}"></i></div></div></div>`).join('');
+setTimeout(()=>$$('#top5 .tr i').forEach(i=>i.style.width=i.dataset.w+'%'),300);
+/* kanban */
+function renderKB(){const q=$('#gs').value.toLowerCase();$('#pv').textContent=eur(deals.filter(d=>d.s!=='won').reduce((a,b)=>a+b.v,0));
+ $('#kb').innerHTML=STAGES.map(([k,n,c])=>{const ds=deals.filter(d=>d.s===k&&(!q||d.c.toLowerCase().includes(q)));return `<div class="col" data-s="${k}"><h4><i style="background:${c}"></i>${n}<span>${ds.length} · ${eur(ds.reduce((a,b)=>a+b.v,0))}</span></h4>${ds.map((d,i)=>`<div class="deal" draggable="true" data-id="${d.id}" style="animation-delay:${i*40}ms"><div class="co">${d.c}</div><div style="color:var(--mut);font-size:12.5px">${d.d}</div><div class="am">${eur(d.v)}</div><div class="ft"><span class="mini" style="width:26px;height:26px;border-radius:8px;font-size:10.5px;background:${OWN[d.o]}">${d.o}</span><span class="chip" style="background:${c}22;color:${c}">${n}</span></div></div>`).join('')}</div>`}).join('');
+ $$('.deal').forEach(el=>{el.addEventListener('dragstart',e=>{el.classList.add('drag');e.dataTransfer.setData('text',el.dataset.id)});el.addEventListener('dragend',()=>el.classList.remove('drag'))});
+ $$('.col').forEach(c=>{c.addEventListener('dragover',e=>{e.preventDefault();c.classList.add('over')});c.addEventListener('dragleave',()=>c.classList.remove('over'));c.addEventListener('drop',e=>{e.preventDefault();c.classList.remove('over');const id=+e.dataTransfer.getData('text');const d=deals.find(x=>x.id===id);if(d&&d.s!==c.dataset.s){d.s=c.dataset.s;save();renderKB();kpis();toast(d.s==='won'?`🎉 ${d.c} won — ${eur(d.v)}!`:`${d.c} → ${STAGES.find(s=>s[0]===d.s)[1]}`)}})});
+ /* touch: tap to advance */
+ $$('.deal').forEach(el=>el.addEventListener('dblclick',()=>{const d=deals.find(x=>x.id===+el.dataset.id);const i=STAGES.findIndex(s=>s[0]===d.s);if(i<STAGES.length-1){d.s=STAGES[i+1][0];save();renderKB();kpis();toast(`${d.c} → ${STAGES[i+1][1]}`)}}));
+}
+$('#dS').innerHTML=STAGES.map(s=>`<option value="${s[0]}">${s[1]}</option>`).join('');
+$('#newDeal').onclick=()=>$('#ov').classList.add('on');$('#dX').onclick=()=>$('#ov').classList.remove('on');$('#ov').onclick=e=>{if(e.target.id==='ov')$('#ov').classList.remove('on')};
+$('#dealF').onsubmit=e=>{e.preventDefault();deals.push({id:Date.now(),c:$('#dC').value,v:+$('#dV').value,s:$('#dS').value,o:$('#dO').value,d:'New opportunity'});save();e.target.reset();$('#ov').classList.remove('on');renderKB();kpis();toast('✓ Deal created')};
+/* contacts */
+const PEOPLE=['Julien Moreau','Salma Bennani','Erik Lindqvist','Camille Durand','Youssef Alami','Sofia Rossi','Lucas Martin','Nadia El Fassi','Hugo Bernard','Léa Petit'];
+const STC={Customer:['#22c55e','rgba(34,197,94,.14)'],Lead:['#3b82f6','rgba(59,130,246,.14)'],Prospect:['#f59e0b','rgba(245,158,11,.14)'],Churned:['#ff5a4e','rgba(255,90,78,.14)']};
+let srt='v',dir=-1;
+function contacts(){return deals.map((d,i)=>({n:PEOPLE[i%PEOPLE.length],c:d.c,st:d.s==='won'?'Customer':d.s==='lead'?'Lead':'Prospect',v:d.v,l:(i*3+1)%14+1,o:d.o}))}
+function renderTB(){const q=$('#gs').value.toLowerCase();let r=contacts().filter(x=>!q||(x.n+x.c).toLowerCase().includes(q));r.sort((a,b)=>(a[srt]>b[srt]?1:-1)*dir);
+ $('#tb').innerHTML=r.map(x=>`<tr><td><div class="who"><span class="mini" style="background:${OWN[x.o]}">${x.n.split(' ').map(w=>w[0]).join('')}</span><div><b>${x.n}</b><small>${x.n.toLowerCase().replace(/[^a-z ]/g,'').replace(' ','.')}@${x.c.toLowerCase().replace(/[^a-z]/g,'')}.com</small></div></div></td><td>${x.c}</td><td><span class="st" style="color:${STC[x.st][0]};background:${STC[x.st][1]}">● ${x.st}</span></td><td><b>${eur(x.v)}</b></td><td style="color:var(--mut)">${x.l} day${x.l>1?'s':''} ago</td></tr>`).join('')}
+$$('.tbl th').forEach(h=>h.onclick=()=>{const k=h.dataset.s;dir=srt===k?-dir:1;srt=k;renderTB()});
+$('#gs').oninput=()=>{const v=$$('.view').find(x=>x.classList.contains('on')).id;if(v==='v-pipe')renderKB();else if(v==='v-cont')renderTB();else{show('cont')}};
+/* tasks */
+function renderTasks(){$('#tasks').innerHTML=tasks.map((t,i)=>`<div class="task ${t.x?'done':''}" data-i="${i}"><button class="cb">${t.x?'✓':''}</button><span class="tx">${t.t}</span><small>${t.d}</small><button class="del" style="color:var(--mut)">✕</button></div>`).join('');
+ $$('.task .cb').forEach(b=>b.onclick=()=>{const i=+b.parentElement.dataset.i;tasks[i].x=!tasks[i].x;save();renderTasks();kpis();if(tasks[i].x)toast('✓ Task completed')});
+ $$('.task .del').forEach(b=>b.onclick=()=>{tasks.splice(+b.parentElement.dataset.i,1);save();renderTasks();kpis()})}
+$('#taskF').onsubmit=e=>{e.preventDefault();const v=$('#taskI').value.trim();if(!v)return;tasks.unshift({t:v,d:'Today',x:false});$('#taskI').value='';save();renderTasks();kpis()};
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
+const h=new Date().getHours();TITLES.dash[0]=(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', Redouane 👋';$('#vt').textContent=TITLES.dash[0];
+kpis();charts();
+})();
+</script>
+</body>
+</html>
